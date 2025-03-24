@@ -1,4 +1,4 @@
-name: P
+name: Playit RDP Tunnel
 
 on:
   workflow_dispatch:
@@ -21,14 +21,14 @@ jobs:
       run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
     - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
-    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText ${{ secrets.MASTER_PASSWORD }} -Force)
+    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "p@ssw0rd!" -Force)
 
     # Add custom user with full name as username
     - name: Add custom user
       run: |
         $username = "Admin"
         $password = ConvertTo-SecureString "p@ssw0rd123" -AsPlainText -Force
-        New-LocalUser -Name $username -Password ${{ secrets.RDP_PASSWORD }} -FullName $username -Description "RDP user"
+        New-LocalUser -Name $username -Password $password -FullName $username -Description "Custom user for RDP access"
         Add-LocalGroupMember -Group "Administrators" -Member $username  # Optionally add user to Administrators group
 
     - name: Start Playit and Set Up RDP Tunnel
